@@ -15,7 +15,10 @@
         <div class="text-h3">Todo</div>
         <div class="subtitle-1">{{ newDate }}</div>
       </div>
-      <q-img class="header-image absolute-top" src="../assets/mountains.jpg" />
+      <q-img
+        class="header-image absolute-top"
+        src="../assets/img/mountains.jpg"
+      />
     </q-header>
 
     <q-drawer
@@ -45,13 +48,6 @@
             </q-item-section>
             <q-item-section> help </q-item-section>
           </q-item>
-
-          <q-item to="/setting" exact clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="power" />
-            </q-item-section>
-            <q-item-section> setting </q-item-section>
-          </q-item>
         </q-list>
       </q-scroll-area>
 
@@ -78,72 +74,17 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import EssentialLink from "components/EssentialLink.vue";
-
-const linksList = [
-  {
-    title: "Docs",
-    caption: "quasar.dev",
-    icon: "school",
-    link: "https://quasar.dev",
-  },
-  {
-    title: "Github",
-    caption: "github.com/quasarframework",
-    icon: "code",
-    link: "https://github.com/quasarframework",
-  },
-  {
-    title: "Discord Chat Channel",
-    caption: "chat.quasar.dev",
-    icon: "chat",
-    link: "https://chat.quasar.dev",
-  },
-  {
-    title: "Forum",
-    caption: "forum.quasar.dev",
-    icon: "record_voice_over",
-    link: "https://forum.quasar.dev",
-  },
-  {
-    title: "Twitter",
-    caption: "@quasarframework",
-    icon: "rss_feed",
-    link: "https://twitter.quasar.dev",
-  },
-  {
-    title: "Facebook",
-    caption: "@QuasarFramework",
-    icon: "public",
-    link: "https://facebook.quasar.dev",
-  },
-  {
-    title: "Quasar Awesome",
-    caption: "Community Quasar projects",
-    icon: "favorite",
-    link: "https://awesome.quasar.dev",
-  },
-];
 
 import { date } from "quasar";
 export default defineComponent({
   name: "MainLayout",
 
-  components: {
-    EssentialLink,
-  },
-
   setup() {
     const leftDrawerOpen = ref(false);
-
-    // destructuring to keep only what is needed
-    const { addToDate } = date;
-
     const timeStamp = Date.now();
     const newDate = date.formatDate(timeStamp, "dddd D MMMM");
 
     return {
-      essentialLinks: linksList,
       leftDrawerOpen,
       newDate,
       toggleLeftDrawer() {
