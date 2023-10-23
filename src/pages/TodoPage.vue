@@ -81,7 +81,7 @@ const addNewTask = () => {
 const deleteTask = (index: number) => {
   quasar
     .dialog({
-      title: "Allert",
+      title: "Alert",
       message: "Really delete this task?",
       cancel: true,
       persistent: true,
