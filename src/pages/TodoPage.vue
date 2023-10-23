@@ -17,17 +17,16 @@
       </q-input>
     </div>
     <q-list class="bg-white" separator bordered>
-      <template v-for="(task, index) in todos" :key="index">
+      <template v-for="(task, index) in todoStore.todoList" :key="index">
         <q-item
           tag="label"
-          v-ripple
           clickable
-          @click="task.done != task.done"
-          :class="{ 'task-done': task.done }"
+          @click="task.compleat != task.compleat"
+          :class="{ 'task-compleat': task.compleat }"
         >
           <q-item-section avatar>
             <q-checkbox
-              v-model="task.done"
+              v-model="task.compleat"
               class="no-pointer-events"
               color="primary"
             />
@@ -35,7 +34,6 @@
           <q-item-section>
             <q-item-label>{{ task.title }}</q-item-label>
           </q-item-section>
-
           <q-btn
             @click="deleteTask(index)"
             flat
@@ -46,63 +44,57 @@
         </q-item>
       </template>
     </q-list>
-    <div class="no-task absolute-center" v-if="!todos.length">
+    <div class="no-task absolute-center" v-if="!todoStore.todoList.length">
       <q-img src="../assets/img/empty.svg" />
       <div class="text-h6 q-mt-lg text-primary">NO TASK</div>
     </div>
   </q-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 import { useQuasar } from "quasar";
-import { useTodosStore } from "../stores/todoStore";
-import { computed } from "@vue/reactivity";
-export default defineComponent({
-  name: "TodoPage",
+import { useTodoStore } from "../stores/todoStore";
+import { ITask } from "src/model";
 
-  setup() {
-    const $q = useQuasar();
-    const alert = (index: number) => {
-      $q.dialog({
-        title: "Allert",
-        message: "Really delete this task?",
-        cancel: true,
-        persistent: true,
-      }).onOk(() => {
-        todosStore.deleteTodo(index);
-        $q.notify({ message: "Your task deleted", color: "negative" });
-      });
+const quasar = useQuasar();
+const todoStore = useTodoStore();
+
+const newTask = ref("");
+
+const addNewTask = () => {
+  if (newTask.value) {
+    const obj: ITask = {
+      title: newTask.value,
+      compleat: false,
+      description: "",
     };
-    const todosStore = useTodosStore();
-
-    const newTask = ref("");
-
-    const todos = computed(() => {
-      return todosStore.todos;
+    todoStore.addTodo(obj);
+    newTask.value = "";
+  } else {
+    quasar.notify({
+      message: "please enter a task",
+      color: "primary",
     });
-    const addNewTask = () => {
-      if (newTask.value) {
-        todosStore.addTodo({ title: newTask.value, done: false });
-        newTask.value = "";
-      } else {
-        $q.notify({
-          message: "please enter a task",
-          color: "primary",
-        });
-      }
-    };
-    const deleteTask = (index: number) => {
-      alert(index);
-    };
-
-    return { todos, newTask, addNewTask, deleteTask };
-  },
-});
+  }
+};
+const deleteTask = (index: number) => {
+  quasar
+    .dialog({
+      title: "Allert",
+      message: "Really delete this task?",
+      cancel: true,
+      persistent: true,
+    })
+    .onOk(() => {
+      todoStore.deleteTodo(index);
+      quasar.notify({ message: "Your task deleted", color: "negative" });
+    });
+};
 </script>
 
 <style lang="scss">
-.task-done {
+.task-compleat {
   .q-item__label {
     text-decoration: line-through;
     color: #bbb;
